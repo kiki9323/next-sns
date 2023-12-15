@@ -7,6 +7,15 @@ import style from "./home.module.css";
 export default function Home() {
   return (
     <div className={style.main}>
+      <TabProvider>
+        <Tab />
+        <PostForm />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+        <Post />
+      </TabProvider>
     </div>
   );
 }

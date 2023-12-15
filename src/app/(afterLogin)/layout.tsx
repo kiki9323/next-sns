@@ -4,7 +4,7 @@ import Link from "next/link";
 import LogoutButton from "./_component/LogoutButton";
 import Loopy from "../../../public/Loopy.jpeg";
 import NavMenu from "./_component/NavMenu";
-import TrendSection from "./_component/TrandSection";
+import TrendSection from "./_component/TrendSection";
 import style from "@/app/(afterLogin)/layout.module.css";
 
 type Props = {
