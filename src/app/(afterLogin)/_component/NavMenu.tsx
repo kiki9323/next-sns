@@ -6,11 +6,10 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 export default function NavMenu() {
   const segment = useSelectedLayoutSegment(); // 레이아웃 기준 폴더들만
-  console.log(segment);
 
   // TODO: 임시 내 정보 (NextAuth 사용 예정)
   const me = {
-    id: "kiki",
+    id: "loopyy",
   };
 
   return (
