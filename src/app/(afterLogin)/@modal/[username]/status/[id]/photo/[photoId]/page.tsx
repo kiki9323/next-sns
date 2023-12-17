@@ -24,7 +24,7 @@ export default function Default() {
         />
         <div className={style.buttonZone}>
           <div className={style.buttonInner}>
-            {/* <ActionButtons white /> */}
+            <ActionButtons white />
           </div>
         </div>
       </div>
