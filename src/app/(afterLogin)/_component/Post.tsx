@@ -29,13 +29,13 @@ export default function Post({ noImage }: Props) {
     Images: [] as any[],
   };
 
-  if (Math.random() > 0 && !noImage) {
+  if (Math.random() > 0.5 && !noImage) {
     target.Images.push(
-      { imageId: 1, link: faker.image.urlLoremFlickr() },
-      { imageId: 2, link: faker.image.urlLoremFlickr() },
-      { imageId: 3, link: faker.image.urlLoremFlickr() },
-      { imageId: 4, link: faker.image.urlLoremFlickr() }
-    );
+      {imageId: 1, link: faker.image.urlLoremFlickr()},
+      {imageId: 2, link: faker.image.urlLoremFlickr()},
+      {imageId: 3, link: faker.image.urlLoremFlickr()},
+      {imageId: 4, link: faker.image.urlLoremFlickr()},
+    )
   }
 
   return (
@@ -43,8 +43,8 @@ export default function Post({ noImage }: Props) {
       <div className={style.postWrapper}>
         <div className={style.postUserSection}>
           <Link href={`/${target.User.id}`} className={style.postUserImage}>
-            <img src={target.User.image} alt={target.User.nickname} />
-            <div className={style.postShade} />
+            <img src={target.User.image} alt={target.User.nickname}/>
+            <div className={style.postShade}/>
           </Link>
         </div>
         <div className={style.postBody}>
@@ -53,19 +53,19 @@ export default function Post({ noImage }: Props) {
               <span className={style.postUserName}>{target.User.nickname}</span>
               &nbsp;
               <span className={style.postUserId}>@{target.User.id}</span>
-              &nbsp; · &nbsp;
+              &nbsp;
+              ·
+              &nbsp;
             </Link>
-            <span className={style.postDate}>
-              {dayjs(target.createdAt).fromNow(true)}
-            </span>
+            <span className={style.postDate}>{dayjs(target.createdAt).fromNow(true)}</span>
           </div>
           <div>{target.content}</div>
-          <div className={style.postImageSection}>
+          <div>
             <PostImages post={target} />
           </div>
-          <ActionButtons />
+          <ActionButtons/>
         </div>
       </div>
     </PostArticle>
-  );
+  )
 }

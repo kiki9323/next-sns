@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import cx from "classnames";
 import style from "@/app/(afterLogin)/_component/post.module.css";

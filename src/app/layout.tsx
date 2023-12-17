@@ -1,6 +1,7 @@
 import "./globals.css";
 
 import { Inter } from "next/font/google";
+import { MSWComponent } from "./_component/MSWComponent";
 import type { Metadata } from "next";
 import styles from "./page.module.css";
 
@@ -18,7 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <MSWComponent />
       <body className={inter.className}>{children}</body>
     </html>
   );
 }
+

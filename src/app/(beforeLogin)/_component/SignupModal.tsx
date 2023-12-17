@@ -1,58 +1,36 @@
-"use client";
-
-import { ChangeEventHandler, FormEventHandler, useState } from "react";
-
+import BackButton from "./BackButton";
+import { redirect } from "next/navigation";
 import style from "./signup.module.css";
-import { useRouter } from "next/navigation";
 
 export default function SignupModal() {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [image, setImage] = useState("");
-  const [imageFile, setImageFile] = useState<File>();
-
-  const router = useRouter();
-  const onClickClose = () => {
-    router.back();
-    // TODO: 뒤로가기가 /home이 아니면 /home으로 보내기
-  };
-
-  const onChangeId: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setId(e.target.value);
-  };
-
-  const onChangePassword: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setPassword(e.target.value);
-  };
-  const onChangeNickname: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setNickname(e.target.value);
-  };
-  const onChangeImageFile: ChangeEventHandler<HTMLInputElement> = (e) => {
-    e.target.files && setImageFile(e.target.files[0]);
-  };
-
-  const onSubmit: FormEventHandler = (e) => {
-    e.preventDefault();
-    fetch("http://localhost:9090/api/users", {
-      method: "post",
-      body: JSON.stringify({
-        id,
-        nickname,
-        image,
-        password,
-      }),
-      credentials: "include",
-    })
-      .then((response: Response) => {
-        console.log(response.status);
-        if (response.status === 200) {
-          router.replace("/home");
+  const submit = async (formData: FormData) => {
+    "use server"; // 클라에서 보이지 않는 소스코드 (프론트엔드 서버이다)
+    let shouldRedirect = false;
+    try {
+      // DB 접속해서 가져오면 됨.
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
+        {
+          method: "post",
+          body: formData,
+          credentials: "include", // 이 옵션이 있어야 쿠키가 전달이 됨. (로그인한 사람이 재회원가입 막기같은..)
         }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      );
+
+      console.log(response.status);
+      if (response.status === 403) {
+        return { message: "user_exists" };
+      }
+      console.log(await response.json());
+      shouldRedirect = true;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+
+    if (shouldRedirect) {
+      redirect("/home"); // try/catch 안에서 redirect하면 안 된다.
+    }
   };
 
   return (
@@ -60,21 +38,10 @@ export default function SignupModal() {
       <div className={style.modalBackground}>
         <div className={style.modal}>
           <div className={style.modalHeader}>
-            <button className={style.closeButton} onClick={onClickClose}>
-              <svg
-                width={24}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="r-18jsvk2 r-4qtqp9 r-yyyyoo r-z80fyv r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-19wmn03"
-              >
-                <g>
-                  <path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path>
-                </g>
-              </svg>
-            </button>
+            <BackButton />
             <div>계정을 생성하세요.</div>
           </div>
-          <form>
+          <form action={submit}>
             <div className={style.modalBody}>
               <div className={style.inputDiv}>
                 <label className={style.inputLabel} htmlFor="id">
@@ -82,11 +49,11 @@ export default function SignupModal() {
                 </label>
                 <input
                   id="id"
+                  name="id"
                   className={style.input}
                   type="text"
                   placeholder=""
-                  value={id}
-                  onChange={onChangeId}
+                  required
                 />
               </div>
               <div className={style.inputDiv}>
@@ -95,11 +62,11 @@ export default function SignupModal() {
                 </label>
                 <input
                   id="name"
+                  name="name"
                   className={style.input}
                   type="text"
                   placeholder=""
-                  value={nickname}
-                  onChange={onChangeNickname}
+                  required
                 />
               </div>
               <div className={style.inputDiv}>
@@ -108,11 +75,11 @@ export default function SignupModal() {
                 </label>
                 <input
                   id="password"
+                  name="password"
                   className={style.input}
                   type="password"
                   placeholder=""
-                  value={password}
-                  onChange={onChangePassword}
+                  required
                 />
               </div>
               <div className={style.inputDiv}>
@@ -121,17 +88,16 @@ export default function SignupModal() {
                 </label>
                 <input
                   id="image"
+                  name="image"
                   className={style.input}
                   type="file"
                   accept="image/*"
-                  onChange={onChangeImageFile}
+                  required
                 />
               </div>
             </div>
             <div className={style.modalFooter}>
-              <button className={style.actionButton} disabled>
-                가입하기
-              </button>
+              <button className={style.actionButton}>가입하기</button>
             </div>
           </form>
         </div>
