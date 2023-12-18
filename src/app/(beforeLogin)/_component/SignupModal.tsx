@@ -1,37 +1,32 @@
-import BackButton from "./BackButton";
-import { redirect } from "next/navigation";
+"use client";
+
 import style from "./signup.module.css";
+import onSubmit from "../_lib/signup";
+import BackButton from "@/app/(beforeLogin)/_component/BackButton";
+import { useFormState, useFormStatus } from "react-dom";
+
+function showMessage(messasge: string) {
+  if (messasge === "no_id") {
+    return "아이디를 입력하세요.";
+  }
+  if (messasge === "no_name") {
+    return "닉네임을 입력하세요.";
+  }
+  if (messasge === "no_password") {
+    return "비밀번호를 입력하세요.";
+  }
+  if (messasge === "no_image") {
+    return "이미지를 업로드하세요.";
+  }
+  if (messasge === "user_exists") {
+    return "이미 사용 중인 아이디입니다.";
+  }
+  return "";
+}
 
 export default function SignupModal() {
-  const submit = async (formData: FormData) => {
-    "use server"; // 클라에서 보이지 않는 소스코드 (프론트엔드 서버이다)
-    let shouldRedirect = false;
-    try {
-      // DB 접속해서 가져오면 됨.
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
-        {
-          method: "post",
-          body: formData,
-          credentials: "include", // 이 옵션이 있어야 쿠키가 전달이 됨. (로그인한 사람이 재회원가입 막기같은..)
-        }
-      );
-
-      console.log(response.status);
-      if (response.status === 403) {
-        return { message: "user_exists" };
-      }
-      console.log(await response.json());
-      shouldRedirect = true;
-    } catch (error) {
-      console.error(error);
-      return;
-    }
-
-    if (shouldRedirect) {
-      redirect("/home"); // try/catch 안에서 redirect하면 안 된다.
-    }
-  };
+  const [state, formAction] = useFormState(onSubmit, { message: "" });
+  const { pending } = useFormStatus();
 
   return (
     <>
@@ -41,7 +36,7 @@ export default function SignupModal() {
             <BackButton />
             <div>계정을 생성하세요.</div>
           </div>
-          <form action={submit}>
+          <form action={formAction}>
             <div className={style.modalBody}>
               <div className={style.inputDiv}>
                 <label className={style.inputLabel} htmlFor="id">
@@ -89,15 +84,24 @@ export default function SignupModal() {
                 <input
                   id="image"
                   name="image"
+                  required
                   className={style.input}
                   type="file"
                   accept="image/*"
-                  required
                 />
               </div>
             </div>
             <div className={style.modalFooter}>
-              <button className={style.actionButton}>가입하기</button>
+              <button
+                type="submit"
+                className={style.actionButton}
+                disabled={pending}
+              >
+                가입하기
+              </button>
+              <div className={style.error}>
+                {showMessage(state?.message || "")}
+              </div>
             </div>
           </form>
         </div>

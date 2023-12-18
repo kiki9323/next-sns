@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { MSWComponent } from "./_component/MSWComponent";
 import type { Metadata } from "next";
 import styles from "./page.module.css";
+import AuthSession from "./_component/AuthSession";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <MSWComponent />
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <MSWComponent />
+        <AuthSession>{children}</AuthSession>
+      </body>
     </html>
   );
 }
-

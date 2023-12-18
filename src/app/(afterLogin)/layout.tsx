@@ -7,13 +7,16 @@ import NavMenu from "./_component/NavMenu";
 import RightSearchZone from "./_component/RightSearchZone";
 import TrendSection from "./_component/TrendSection";
 import style from "@/app/(afterLogin)/layout.module.css";
+import { auth } from "@/auth";
 
 type Props = {
   children: React.ReactNode;
   modal: React.ReactNode;
 };
 
-export default function AfterLoginLayout({ children, modal }: Props) {
+export default async function AfterLoginLayout({ children, modal }: Props) {
+  const session = await auth();
+
   return (
     <div className={style.container}>
       <header className={style.leftSectionWrapper}>
@@ -24,15 +27,19 @@ export default function AfterLoginLayout({ children, modal }: Props) {
                 <Image src={Loopy} alt="루피 로고" width={40} />
               </div>
             </Link>
-            <nav>
-              <ul>
-                <NavMenu />
-              </ul>
-              <Link href="/compose/tweet" className={style.postButton}>
-                게시하기
-              </Link>
-            </nav>
-            <LogoutButton />
+            {session?.user && (
+              <>
+                <nav>
+                  <ul>
+                    <NavMenu />
+                  </ul>
+                  <Link href="/compose/tweet" className={style.postButton}>
+                    게시하기
+                  </Link>
+                </nav>
+                <LogoutButton />
+              </>
+            )}
           </div>
         </div>
       </header>
